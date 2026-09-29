@@ -99,6 +99,18 @@ npm run deploy
 
 After any change to `wrangler.jsonc`, run `npm run cf-typegen`.
 
+## Abuse protection
+
+Everything that creates or changes data sits behind Access. The public surface is limited to:
+- `GET /api/games/:code`: malformed codes (anything but 6 digits) are rejected without a D1 query.
+- `/parties/quiz-room/:code`: the Worker checks the game exists in D1 before routing to the Durable Object, so random codes never instantiate one. Plain HTTP requests to `/parties/*` are rejected.
+
+The client checks the game through the API before opening the WebSocket (otherwise `partysocket` would retry a 404 forever), and gives up reconnecting after ~5 minutes.
+
+On the Workers **Free** plan, traffic beyond the daily quotas is rejected, never billed. For extra safety, add a WAF rate limiting rule on `/api/` and `/parties/` (one rule is included in the free zone plan).
+
+Note: the local D1 database is keyed by `database_id`, so after changing it run `npm run db:migrate:local` again.
+
 ## Costs
 
 Normal usage fits in the Workers free plan: SQLite-backed Durable Objects, D1 (5 GB) and static assets are free. Thanks to WebSocket hibernation, an idle lobby doesn't consume Durable Object compute time.

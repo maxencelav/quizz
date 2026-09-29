@@ -6,8 +6,10 @@ import {
   type HostView,
   type PlayerView,
   type ServerMessage,
+  type GameSummary,
 } from "../../shared/types";
-import type { UiError } from "./errors";
+import { api } from "./api";
+import { toUiError, type UiError } from "./errors";
 
 const PLAYER_ID_KEY = "quizz:player-id";
 
@@ -28,8 +30,22 @@ export function useRoom<R extends "host" | "player">(code: string, role: R) {
   const [error, setError] = useState<UiError | null>(null);
   const [kicked, setKicked] = useState(false);
   const [deadline, setDeadline] = useState<number | null>(null);
+  const [gameFound, setGameFound] = useState(false);
+
+  // Check the game exists before opening the socket: the Worker answers unknown codes
+  // with a plain 404, which the socket would otherwise retry forever.
+  useEffect(() => {
+    setGameFound(false);
+    api<GameSummary>(`/games/${code}`).then(
+      () => setGameFound(true),
+      (e) => setError(toUiError(e)),
+    );
+  }, [code]);
 
   const socket = usePartySocket({
+    enabled: gameFound,
+    // ~5 minutes of reconnection attempts (backoff capped at 10 s), then give up
+    maxRetries: 30,
     party: PARTY,
     room: code,
     id: role === "player" ? getPlayerId() : undefined,

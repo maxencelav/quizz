@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { getServerByName } from "partyserver";
 import type { GameMode, GameSummary, QuestionSet, QuestionSetSummary } from "../shared/types";
-import { parseMode, sanitizeQuestions } from "../shared/validation";
+import { isValidPin, parseMode, sanitizeQuestions } from "../shared/validation";
 import { AppError, type ErrorBody } from "../shared/errors";
 import { verifyAdmin, type AdminIdentity } from "./auth";
 
@@ -64,9 +64,11 @@ api.onError((err, c) => {
 // ---------------------------------------------------------------------------
 
 api.get("/games/:code", async (c) => {
-  const row = await c.env.DB.prepare("SELECT * FROM games WHERE code = ?")
-    .bind(c.req.param("code"))
-    .first<GameRow>();
+  const code = c.req.param("code");
+  // Malformed codes are rejected without touching D1
+  const row = isValidPin(code)
+    ? await c.env.DB.prepare("SELECT * FROM games WHERE code = ?").bind(code).first<GameRow>()
+    : null;
   if (!row) throw new AppError("game_not_found", undefined, 404);
   return c.json(toGame(row));
 });

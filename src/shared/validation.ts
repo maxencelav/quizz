@@ -3,6 +3,9 @@ import type { GameMode, Question } from "./types";
 
 export const parseMode = (v: unknown): GameMode => (v === "informative" ? "informative" : "competitive");
 
+/** Game PINs are exactly 6 digits */
+export const isValidPin = (code: string) => /^\d{6}$/.test(code);
+
 /** Available durations in seconds; 0 = unlimited */
 export const TIME_LIMITS = [5, 10, 20, 30, 60, 90, 120, 0];
 
