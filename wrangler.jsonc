@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "quizz",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-09-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "vars": {
+    // Cloudflare Zero Trust > Access: team domain and "Application Audience (AUD) Tag"
+    "ACCESS_TEAM_DOMAIN": "https://<team>.cloudflareaccess.com",
+    "ACCESS_AUD": ""
+  },
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/parties/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "QuizRoom", "class_name": "QuizRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["QuizRoom"] }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "quizz-db",
+      // Replace with the id returned by `npx wrangler d1 create quizz-db`
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

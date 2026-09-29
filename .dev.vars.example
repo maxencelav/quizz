@@ -1,0 +1,5 @@
+# No Cloudflare Access locally: the admin is open on the dev server.
+# Never set this variable in production.
+DEV_AUTH_BYPASS=true
+ACCESS_TEAM_DOMAIN=
+ACCESS_AUD=
