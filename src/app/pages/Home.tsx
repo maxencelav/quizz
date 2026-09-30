@@ -68,7 +68,7 @@ export function Home() {
       <div className={s.corner}>
         <ThemeToggle />
       </div>
-      <Title1>{t("common.appName")}</Title1>
+      <Title1 align="center">{t("common.appName")}</Title1>
       <Card className={s.card}>
         <form className={s.form} onSubmit={join}>
           <Field label={t("home.pin")}>

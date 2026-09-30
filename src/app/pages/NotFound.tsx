@@ -25,8 +25,8 @@ export function NotFound() {
 
   return (
     <main className={s.page}>
-      <Title1>{notFound ? t("notFound.title") : t("notFound.errorTitle")}</Title1>
-      <Subtitle1>{notFound ? t("notFound.subtitle") : t("notFound.errorSubtitle")}</Subtitle1>
+      <Title1 align="center">{notFound ? t("notFound.title") : t("notFound.errorTitle")}</Title1>
+      <Subtitle1 align="center">{notFound ? t("notFound.subtitle") : t("notFound.errorSubtitle")}</Subtitle1>
       {/* Plain link (no client-side routing): works even if the router is in an error state */}
       <Button as="a" href="/" appearance="primary">
         {t("common.backHome")}

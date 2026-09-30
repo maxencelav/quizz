@@ -97,7 +97,7 @@ export function Play() {
     return (
       <main className={s.page}>
         <div className={s.body}>
-          <Title3>{t("play.kicked")}</Title3>
+          <Title3 align="center">{t("play.kicked")}</Title3>
           <Button onClick={() => navigate("/")}>{t("common.backHome")}</Button>
         </div>
       </main>
@@ -140,8 +140,8 @@ export function Play() {
   } else if (phase === "lobby") {
     content = (
       <>
-        <Title2>{t("play.welcome", { name: me.name })}</Title2>
-        <Body1>{t("play.waitingStart")}</Body1>
+        <Title2 align="center">{t("play.welcome", { name: me.name })}</Title2>
+        <Body1 align="center">{t("play.waitingStart")}</Body1>
         <Spinner />
       </>
     );
@@ -149,7 +149,7 @@ export function Play() {
     content =
       view.answered === null ? (
         <>
-          <Subtitle1>{question.text}</Subtitle1>
+          <Subtitle1 align="center">{question.text}</Subtitle1>
           <div className={s.grid}>
             {question.answers.map((a, i) => (
               <AnswerTile key={i} index={i} onClick={() => send({ type: "answer", index: i })}>
@@ -160,7 +160,7 @@ export function Play() {
         </>
       ) : (
         <>
-          <Title3>{t("play.answerSent")}</Title3>
+          <Title3 align="center">{t("play.answerSent")}</Title3>
           <div style={{ width: "100%", maxWidth: 360 }}>
             <AnswerTile index={view.answered}>{question.answers[view.answered]}</AnswerTile>
           </div>
@@ -171,8 +171,8 @@ export function Play() {
     // Poll: no correct answer
     content = (
       <>
-        <Title2>{view.answered === null ? t("play.noAnswer") : t("play.answerRecorded")}</Title2>
-        <Body1>{t("play.lookAtScreen")}</Body1>
+        <Title2 align="center">{view.answered === null ? t("play.noAnswer") : t("play.answerRecorded")}</Title2>
+        <Body1 align="center">{t("play.lookAtScreen")}</Body1>
       </>
     );
   } else if (phase === "reveal") {
@@ -184,8 +184,8 @@ export function Play() {
         ) : (
           <DismissCircleFilled className={s.bigIcon} color={tokens.colorPaletteRedForeground1} />
         )}
-        <Title2>{ok ? t("play.correct") : view.answered === null ? t("play.tooLate") : t("play.wrong")}</Title2>
-        {ok && competitive && <Title3>+{lastResult?.points}</Title3>}
+        <Title2 align="center">{ok ? t("play.correct") : view.answered === null ? t("play.tooLate") : t("play.wrong")}</Title2>
+        {ok && competitive && <Title3 align="center">+{lastResult?.points}</Title3>}
         {competitive && me.streak >= 2 && (
           <Badge size="extra-large" color="warning" icon={<FireFilled />}>
             {t("play.streak", { count: me.streak })}
@@ -196,16 +196,16 @@ export function Play() {
   } else if (phase === "ended" && !competitive) {
     content = (
       <>
-        <Title2>{t("play.thanks")}</Title2>
+        <Title2 align="center">{t("play.thanks")}</Title2>
         <Button onClick={() => navigate("/")}>{t("common.backHome")}</Button>
       </>
     );
   } else if (phase === "leaderboard" || phase === "ended") {
     content = (
       <>
-        <Subtitle1>{phase === "ended" ? t("play.finalRanking") : t("play.ranking")}</Subtitle1>
-        <Title2>{t("play.rank", { count: me.rank, ordinal: true, total: view.playerCount })}</Title2>
-        <Title3>{t("play.points", { count: me.score })}</Title3>
+        <Subtitle1 align="center">{phase === "ended" ? t("play.finalRanking") : t("play.ranking")}</Subtitle1>
+        <Title2 align="center">{t("play.rank", { count: me.rank, ordinal: true, total: view.playerCount })}</Title2>
+        <Title3 align="center">{t("play.points", { count: me.score })}</Title3>
         {phase === "ended" && <Button onClick={() => navigate("/")}>{t("play.newGame")}</Button>}
       </>
     );

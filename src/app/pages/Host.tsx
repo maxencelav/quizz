@@ -240,8 +240,8 @@ export function Host() {
             </div>
           ) : (
             <>
-              <Title1>{t("host.thanks")}</Title1>
-              <Subtitle1>{t("host.participants", { count: view.players.length })}</Subtitle1>
+              <Title1 align="center">{t("host.thanks")}</Title1>
+              <Subtitle1 align="center">{t("host.participants", { count: view.players.length })}</Subtitle1>
             </>
           ))}
       </div>
