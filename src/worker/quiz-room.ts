@@ -143,7 +143,8 @@ export class QuizRoom extends Server<Env> {
         if (this.state.phase === "question") await this.reveal();
         break;
       case "next":
-        if (this.state.phase === "question") await this.reveal();
+        if (this.state.phase === "preview") await this.openAnswers();
+        else if (this.state.phase === "question") await this.reveal();
         // Informative mode: no leaderboard screen between questions
         else if (this.state.phase === "reveal" && this.mode() === "competitive") await this.setPhase("leaderboard");
         else if (this.state.phase === "reveal" || this.state.phase === "leaderboard") {
@@ -220,18 +221,29 @@ export class QuizRoom extends Server<Env> {
     else this.broadcastState();
   }
 
+  /** Step 1: show the question alone, without answers or timer. */
   private async startQuestion(index: number) {
-    const q = this.state.questions[index];
-    const now = Date.now();
     Object.assign(this.state, {
-      phase: "question",
+      phase: "preview",
       current: index,
       answers: {},
-      startedAt: now,
-      // Unlimited timer: no deadline, the host reveals (or everyone has answered)
-      deadline: q.timeLimit > 0 ? now + q.timeLimit * 1000 : null,
+      startedAt: null,
+      deadline: null,
     } satisfies Partial<RoomState>);
     for (const p of Object.values(this.state.players)) p.lastResult = null;
+    await this.save();
+    this.broadcastState();
+  }
+
+  /** Step 2: show the answers and start the timer (response times count from here). */
+  private async openAnswers() {
+    const q = this.currentQuestion();
+    if (!q) return;
+    const now = Date.now();
+    this.state.phase = "question";
+    this.state.startedAt = now;
+    // Unlimited timer: no deadline, the host reveals (or everyone has answered)
+    this.state.deadline = q.timeLimit > 0 ? now + q.timeLimit * 1000 : null;
     if (this.state.deadline !== null) await this.ctx.storage.setAlarm(this.state.deadline);
     await this.save();
     this.broadcastState();
@@ -349,16 +361,20 @@ export class QuizRoom extends Server<Env> {
   private publicQuestion(): PublicQuestion | null {
     const q = this.currentQuestion();
     if (!q) return null;
-    const revealed = this.state.phase !== "question";
     return {
       index: this.state.current,
       total: this.state.questions.length,
       text: q.text,
-      answers: q.answers,
+      // Answers stay hidden during the preview, even from the network payload
+      answers: this.state.phase === "preview" ? [] : q.answers,
       timeLimit: q.timeLimit,
       imageUrl: q.imageUrl,
-      correct: revealed ? q.correct : undefined,
+      correct: this.isRevealed() ? q.correct : undefined,
     };
+  }
+
+  private isRevealed(): boolean {
+    return ["reveal", "leaderboard", "ended"].includes(this.state.phase);
   }
 
   private remainingMs(): number | null {
@@ -370,7 +386,7 @@ export class QuizRoom extends Server<Env> {
     const connected = this.connectedPlayerIds();
     const q = this.currentQuestion();
     let distribution: number[] | null = null;
-    if (q && this.state.phase !== "question") {
+    if (q && this.isRevealed()) {
       distribution = q.answers.map(() => 0);
       for (const a of Object.values(this.state.answers)) distribution[a.index]++;
     }

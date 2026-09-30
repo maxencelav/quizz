@@ -28,7 +28,8 @@ migrations/        D1 schema
 - Players have a stable id (localStorage), so a refresh or a network drop reconnects them with their score.
 - The admin is protected by **Cloudflare Access** (see below).
 
-Game flow: `lobby → question → reveal → leaderboard → question … → ended`.
+Game flow: `lobby → preview → question → reveal → leaderboard → preview … → ended`.
+Each question is presented in two steps: `preview` shows the question alone (no answers, no timer, answers aren't even sent to players), then the host moves on to `question`, which shows the answers and starts the timer. Response times count from that second step.
 The reveal happens when the timer runs out, or as soon as every connected player has answered.
 
 **Modes** (chosen per question set, frozen when the game is created):

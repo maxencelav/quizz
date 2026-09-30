@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   makeStyles,
+  mergeClasses,
   MessageBar,
   Spinner,
   Subtitle1,
@@ -98,6 +99,7 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightBold,
     flexShrink: 0,
   },
+  previewQuestion: { fontSize: tokens.fontSizeHero900, lineHeight: tokens.lineHeightHero900 },
   image: { maxHeight: "35vh", maxWidth: "100%", borderRadius: tokens.borderRadiusXLarge },
   grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: tokens.spacingHorizontalL, width: "100%" },
   chart: { display: "flex", alignItems: "flex-end", gap: tokens.spacingHorizontalL, height: "30vh" },
@@ -156,6 +158,8 @@ export function Host() {
   const isLast = !!view.question && view.question.index + 1 >= view.question.total;
   const nextLabel = (() => {
     switch (view.phase) {
+      case "preview":
+        return t("host.showAnswers");
       case "question":
         return t("host.reveal");
       case "reveal":
@@ -221,6 +225,7 @@ export function Host() {
 
       <div className={s.stage}>
         {view.phase === "lobby" && <Lobby view={view} onKick={(id) => send({ type: "kick", playerId: id })} />}
+        {view.phase === "preview" && <PreviewStage view={view} />}
         {(view.phase === "question" || view.phase === "reveal") && <QuestionStage view={view} seconds={seconds} />}
         {view.phase === "leaderboard" && (
           <div className={s.board}>
@@ -285,6 +290,18 @@ function Lobby({ view, onKick }: { view: HostView; onKick: (id: string) => void 
           </TagGroup>
         )}
       </Card>
+    </>
+  );
+}
+
+/** Step 1: the question alone, large, before the answers are shown. */
+function PreviewStage({ view }: { view: HostView }) {
+  const s = useStyles();
+  const q = view.question!;
+  return (
+    <>
+      <Card className={mergeClasses(s.question, s.previewQuestion)}>{q.text}</Card>
+      {q.imageUrl && <img className={s.image} src={q.imageUrl} alt="" />}
     </>
   );
 }

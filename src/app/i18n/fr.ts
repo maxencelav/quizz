@@ -32,6 +32,8 @@ export const fr: Translation = {
     kicked: "L'hôte a mis fin à votre participation",
     welcome: "C'est parti, {{name}} !",
     waitingStart: "Votre nom apparaît à l'écran. En attente du lancement…",
+    getReady: "Préparez-vous…",
+    answersSoon: "Les réponses vont s'afficher.",
     answerSent: "Réponse envoyée !",
     waitingOthers: "En attente des autres joueurs…",
     noAnswer: "Pas de réponse",
@@ -55,6 +57,7 @@ export const fr: Translation = {
   },
   host: {
     pin: "PIN {{code}}",
+    showAnswers: "Afficher les réponses",
     reveal: "Révéler",
     leaderboard: "Classement",
     finish: "Terminer",

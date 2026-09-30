@@ -74,7 +74,11 @@ export interface GameSummary {
 
 export const PARTY = "quiz-room";
 
-export type Phase = "lobby" | "question" | "reveal" | "leaderboard" | "ended";
+/**
+ * preview: the question is shown alone (no answers, no timer) until the host moves on.
+ * question: answers are shown, the timer runs and players can answer.
+ */
+export type Phase = "lobby" | "preview" | "question" | "reveal" | "leaderboard" | "ended";
 
 export type ClientMessage =
   | { type: "join"; name: string }
@@ -96,10 +100,11 @@ export interface PublicQuestion {
   index: number;
   total: number;
   text: string;
+  /** Empty during the preview phase */
   answers: string[];
   timeLimit: number;
   imageUrl?: string;
-  /** Only set during the reveal phase */
+  /** Only set once the answer has been revealed */
   correct?: number[];
 }
 

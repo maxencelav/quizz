@@ -145,6 +145,14 @@ export function Play() {
         <Spinner />
       </>
     );
+  } else if (phase === "preview" && question) {
+    content = (
+      <>
+        <Subtitle1 align="center">{t("play.getReady")}</Subtitle1>
+        <Title3 align="center">{question.text}</Title3>
+        <Spinner label={t("play.answersSoon")} />
+      </>
+    );
   } else if (phase === "question" && question) {
     content =
       view.answered === null ? (

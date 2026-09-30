@@ -32,6 +32,8 @@ export const en = {
     kicked: "You were removed from the game",
     welcome: "You're in, {{name}}!",
     waitingStart: "Your name is on the screen. Waiting for the game to start…",
+    getReady: "Get ready…",
+    answersSoon: "The answers are coming up.",
     answerSent: "Answer sent!",
     waitingOthers: "Waiting for the other players…",
     noAnswer: "No answer",
@@ -54,6 +56,7 @@ export const en = {
   },
   host: {
     pin: "PIN {{code}}",
+    showAnswers: "Show answers",
     reveal: "Reveal",
     leaderboard: "Leaderboard",
     finish: "Finish",
